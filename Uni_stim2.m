@@ -48,6 +48,8 @@ elseif recobj.delayTTL2/1000> sobj.delayPTB
 end
 
 disp(['AITrig; ',sobj.pattern, ': #', num2str(recobj.cycleNum)]);
+
+
 %stim_OFF
 Screen('FillRect', sobj.wPtr, sobj.bgcol);
 [sobj.vbl_3, sobj.OnsetTime_3, sobj.FlipTimeStamp_3] = Screen(sobj.wPtr, 'Flip', sobj.vbl_2+sobj.duration); %%% sobj.duration ŽžŠÔŒo‰ßŒã monitor stim off

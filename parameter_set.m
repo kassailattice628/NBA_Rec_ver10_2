@@ -154,7 +154,7 @@ InCh(1).TerminalConfig = 'Differential';%SingleEnded Ç©ÇÁ Differential Ç…ïœçXÇµÇ
 InCh(2).TerminalConfig = 'Differential';
 InCh(3).TerminalConfig = 'Differential';
 
-
+%{
 OutCh = addAnalogOutputChannel(s, dev.ID, 0:1,'Voltage');
 %(1):Curretn Pulse (C clamp)
 %(2):Voltage Pulse (V clamp)
@@ -164,12 +164,18 @@ addTriggerConnection(s,'External',[dev.ID,'/PFI0'],'StartTrigger');
 s.Connections(1).TriggerCondition = 'RisingEdge';
 % generate event listener for Background recording
 lh = addlistener(s, 'DataAvailable', @RecPlotData2);
+%}
 stop(s)
+
 
 %% for digital Trigger
 sTrig = daq.createSession(dev.Vendor.ID);
-addDigitalChannel(sTrig, dev.ID, 'port0/line0:1', 'OutputOnly');
-outputSingleScan(sTrig,[0,0]); %reset trigger signals at Low
+addDigitalChannel(sTrig, dev.ID, 'port0/line0:3', 'OutputOnly');
+%0:Trig NIDAQ, not used in Toku
+%1:RecStart Timing
+%2:Stimulus On Timing
+%3:save for future
+outputSingleScan(sTrig,[0,0,0,0]); %reset trigger signals at Low
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% for Rotary Encoder

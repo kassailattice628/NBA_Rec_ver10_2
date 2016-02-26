@@ -12,7 +12,8 @@ fstim = get(figUIobj.stim,'value');
 if floop == 0;% Loop-Out
     set(figUIobj.loop,'string','Loop-Out','BackGroundColor','r');
     if sobj.ScrNum ~= 0
-        outputSingleScan(sTrig,[0,0]); %trigger reset
+        %Toku ‚Å‚Í dio ‚ğ 4‚Â
+        outputSingleScan(sTrig,[0,0,0,0]); %trigger reset
     end
     sobj.Dir8 = randperm(8);
     sobj.Dir16 = randperm(16);
@@ -28,7 +29,7 @@ elseif floop == 1;%Looping
         try %error check
             recobj.cycleNum = recobj.cycleNum +1;
             %%%%%%%%%%%%%%%%%%
-            prepAOdata;%AO data 2ch ‚ğ€”õ‚µ‚Ä queue
+            %prepAOdata;%AO data 2ch ‚ğ€”õ‚µ‚Ä queue
             %%%%%
             
             startBackground(s); %wait trigger for recording

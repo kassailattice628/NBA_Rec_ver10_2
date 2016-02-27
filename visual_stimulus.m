@@ -51,9 +51,11 @@ if recobj.cycleNum > 0 %stim_on
         case {'2stim'}
             Two_stim_lag3(i, sobj.stimcol, sobj.stimcol2, sobj.delayPTB, sobj.delayPTB2)
             disp('2stim');
-        case {'Images'}
+        %{
+        case {'Images'} %Images is not used in Toku exp
             Test_RandImgs(i);
             disp('RandImages');
+        %}
     end
 else %prestimulus
     Uni_stim_BG(i, sobj.bgcol); %blank ÇÕ Uni_stim Ç≈îwåiêFÇÇæÇ∑ÇÊÇ§Ç…ÇµÇÊÇ§

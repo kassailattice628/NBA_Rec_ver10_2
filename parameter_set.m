@@ -8,7 +8,7 @@ global InCh
 
 
 %% NBA version
-recobj.NBAver = 10.2;
+recobj.NBAver = 10.201;%10.2.1 for tokuoka experiment
 
 %% 電気記録と記録サイクル関係
 recobj.interval = 1; %loop interval(s);
@@ -104,14 +104,10 @@ sobj.tPTBoff2=0;
 
 sobj.fixpos = 1;
 
-%sobj.shiftSpd = 20; %
 sobj.shiftSpd2 = 2;%Hz
-%sobj.shiftSpd_list = [20; 30; 50;100];% Frames/cycle
 sobj.shiftSpd_list = [0.5; 1; 2; 4; 8];%Hz
 
-%sobj.gratFreq = 1/1000*2*pi;%cycle/pixel
 sobj.gratFreq2 = 0.08;% cycle/degree
-%sobj.gratFreq_list = [1/1000*2*pi;3/1000*2*pi;5/1000*2*pi;10/1000*2*pi;30/1000*2*pi;50/1000*2*pi];
 sobj.gratFreq_list = [0.01;0.02;0.04;0.08;0.16;0.32];
 
 
@@ -157,7 +153,9 @@ InCh(3).TerminalConfig = 'Differential';
 OutCh = addAnalogOutputChannel(s, dev.ID, 0:1,'Voltage');
 %(1):Curretn Pulse (C clamp)
 %(2):Voltage Pulse (V clamp)
+%}
 
+% PFI0 can be used as AI start in USB-6001.
 % P0.0 is Trigger source, PFI0 is Trigger Destination.
 addTriggerConnection(s,'External',[dev.ID,'/PFI0'],'StartTrigger');
 s.Connections(1).TriggerCondition = 'RisingEdge';
@@ -167,31 +165,14 @@ lh = addlistener(s, 'DataAvailable', @RecPlotData2);
 stop(s)
 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% for digital Trigger
 sTrig = daq.createSession(dev.Vendor.ID);
 addDigitalChannel(sTrig, dev.ID, 'port0/line0:3', 'OutputOnly');
-%0:Trig NIDAQ, not used in Toku
-%1:RecStart Timing
-%2:Stimulus On Timing
-%3:save for future
+%0:Trig NIDAQ -> connect to start digidata
+%1:FV start Timing -> not used in Toku exp 
+%2:Stimulus is Stim On Timing -> connect to Ch0 of digidata
+%3:Opto timing -> connect to opt laser dirver (still not setting)
 outputSingleScan(sTrig,[0,0,0,0]); %reset trigger signals at Low
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% for Rotary Encoder
-%{
-global sRot
-sRot5V = daq.createSession(dev.Vendor.ID);
-addDigitalChannel(sRot5V, 'Dev2', 'port0/line3', 'OutputOnly'); %5V 電源の確保
-outputSingleScan(sRot5V, 1); %reset trigger signals at Low
-
-sRot = daq.createSession(dev.Vendor.ID);
-%Counter channel の 生成
-RotCh = addCounterInputChannel(sRot, 'Dev2', 'ctr0', 'Position');
-RotCh.EncoderType='X4'; %デコーディング方式 X1, X2, X4 が選べるが X4 が一番感度が高くなるので
-addAnalogInputChannel(sRot, 'Dev2', 3, 'Voltage');% AI0:2 は Vm, Im, Photo, AI3 をエンコーダに
-sRot.Rate = 1000;% s とは別に sampling rate を設定
-sRot.DurationInSeconds = recobj.rect/1000; %ms
-% P0.0 is Trigger source, PFI0 is Trigger Destination.これで同時に記録できる？
-addTriggerConnection(sRot,'External',[dev.ID,'/PFI0'],'StartTrigger');
-sRot.Connections(1).TriggerCondition = 'RisingEdge';
-%}

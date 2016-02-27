@@ -107,6 +107,7 @@ if recobj.delayTTL2/1000 <= sobj.delayPTB %TTL2 の後 stim
     % onscreen に １枚目提示してタイマースタート
     [sobj.vbl_2, sobj.OnsetTime_2, sobj.FlipTimeStamp_2] = Screen(sobj.wPtr, 'Flip', sobj.vbl_1+sobj.delayPTB);% put some delay for PTB
     sobj.sFlipTimeStamp_2=toc(recobj.STARTloop);
+    outputSingleScan(sTrig,[0,0,1,0]);% DO for visual stimulus start
     stim_monitor;
 elseif recobj.delayTTL2/1000 > sobj.delayPTB %grating の途中で TTL2出せない気がする．．
     disp('ERROR!!');
@@ -126,5 +127,6 @@ disp(['AITrig; ', sobj.pattern, ': #', num2str(recobj.cycleNum)]);
 %stim_OFF
 Screen('FillRect', sobj.wPtr, sobj.bgcol);
 [sobj.vbl_3, sobj.OnsetTime_3, sobj.FlipTimeStamp_3] = Screen(sobj.wPtr, 'Flip', sobj.vbl_2+sobj.duration);
+outputSingleScan(sTrig,[0,0,0,0]);% DO resrt (stim off)
 sobj.sFlipTimeStamp_3=toc(recobj.STARTloop);
 stim_monitor_reset;

@@ -27,18 +27,18 @@ Screen('FillRect',Stim3, 255, [0 0 40 40]);%sensor for 2 stimuli
 %%%%%%%
 %ScreenFlip%
 %%%%%%%
-if delay1 == delay2
+if delay1 == delay2 % same timing
     Screen('DrawTexture', sobj.wPtr, Stim3)
     [sobj.vbl_2, sobj.OnsetTime_2, sobj.FlipTimeStamp_2] = Screen('Flip', sobj.wPtr, sobj.vbl_1 + delay1);
     sobj.vbl2_2 = sobj.vbl_2;
     sobj.OnsetTime2_2 = sobj.OnsetTime_2;
     sobj.FlipTimeStamp2_2 = sobj.FlipTimeStamp_2;
-elseif delay1 < delay2
+elseif delay1 < delay2 % Stim1 appears earier thant Stm1
     Screen('DrawTexture', sobj.wPtr, Stim1)
     [sobj.vbl_2, sobj.OnsetTime_2, sobj.FlipTimeStamp_2] = Screen('Flip', sobj.wPtr, sobj.vbl_1 + delay1);
     Screen('DrawTexture', sobj.wPtr, Stim3)
     [sobj.vbl2_2, sobj.OnsetTime2_2, sobj.FlipTimeStamp2_2] = Screen('Flip', sobj.wPtr, sobj.vbl_1 + delay2);
-elseif delay1 > delay2
+elseif delay1 > delay2 %Stim2 appears earier than Stim1
     Screen('DrawTexture', sobj.wPtr, Stim2)
     [sobj.vbl2_2, sobj.OnsetTime2_2, sobj.FlipTimeStamp2_2] = Screen('Flip', sobj.wPtr, sobj.vbl_1 + delay2);
     Screen('DrawTexture', sobj.wPtr, Stim3)
@@ -49,7 +49,7 @@ stim_monitor;
 dur1 = delay1+sobj.duration;
 dur2 = delay2+sobj.duration2;
 
-if dur1 == dur2
+if dur1 == dur2 %Same duration 
     Screen('FillRect', sobj.wPtr, sobj.bgcol);
     [sobj.vbl_3, sobj.OnsetTime_3, sobj.FlipTimeStamp_3] = Screen('Flip', sobj.wPtr, sobj.vbl_1+dur1);
     sobj.vbl2_3 = sobj.vbl_3;

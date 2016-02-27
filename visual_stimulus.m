@@ -56,7 +56,7 @@ if recobj.cycleNum > 0 %stim_on
             disp('RandImages');
     end
 else %prestimulus
-    Uni_stim2(i, sobj.bgcol); %blank ‚Í Uni_stim ‚Å”wŒiF‚ğ‚¾‚·‚æ‚¤‚É‚µ‚æ‚¤
+    Uni_stim_BG(i, sobj.bgcol); %blank ‚Í Uni_stim ‚Å”wŒiF‚ğ‚¾‚·‚æ‚¤‚É‚µ‚æ‚¤
     sobj.vbl2_2 = sobj.vbl_1;
     sobj.vbl2_3 = sobj.vbl_1;
 end

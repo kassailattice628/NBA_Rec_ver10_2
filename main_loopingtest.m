@@ -27,13 +27,8 @@ elseif floop == 1;%Looping
     
     while floop == 1
         try %error check
-            recobj.cycleNum = recobj.cycleNum +1;
-            %%%%%%%%%%%%%%%%%%
-            %prepAOdata;%AO data 2ch ÇèÄîıÇµÇƒ queue
-            %%%%%
-            
+            recobj.cycleNum = recobj.cycleNum +1;            
             startBackground(s); %wait trigger for recording
-            %outputSingleScan(sTrig,[1,1])
             %%%%%%%%%%%%%%%%%%%%%%%
             if fstim == 1%visual stim ON
                 visual_stimulus;
@@ -73,7 +68,7 @@ elseif floop == 1;%Looping
             %%%%%%%%%%%%%%%%%
             %%%%%   reset trigger   %%%%
             %%%%%%%%%%%%%%%%%
-            outputSingleScan(sTrig,[0,0]); %trigger reset
+            outputSingleScan(sTrig,[0,0,0,0]); %trigger reset
             stop(s)
             pause(recobj.interval);
             floop = get(figUIobj.loop,'value');

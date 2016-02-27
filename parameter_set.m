@@ -5,8 +5,7 @@ global dev
 global s
 global sTrig
 global InCh
-global OutCh
-global lh
+
 
 %% NBA version
 recobj.NBAver = 10.2;

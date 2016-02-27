@@ -14,7 +14,7 @@ global recobj
 global figUIobj
 global lh
 
-outputSingleScan(sTrig,[0,0]); %reset trigger signals at Low
+outputSingleScan(sTrig,[0,0,0,0]); %reset trigger signals at Low
 
 %% for AI/AO
 s.Rate = recobj.sampf;

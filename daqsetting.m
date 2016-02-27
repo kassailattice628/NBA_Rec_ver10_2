@@ -9,9 +9,7 @@ function daqsetting
 
 global sTrig
 global s
-global sRot
 global recobj
-global figUIobj
 global lh
 
 outputSingleScan(sTrig,[0,0,0,0]); %reset trigger signals at Low
@@ -20,6 +18,9 @@ outputSingleScan(sTrig,[0,0,0,0]); %reset trigger signals at Low
 s.Rate = recobj.sampf;
 recobj.sampt = round(10^6/recobj.sampf);
 recobj.recp = recobj.sampf*recobj.rect/1000;
+
+s.DurationInSeconds = recobj.rect/1000;%sec %outputchannel Ç¢ÇÍÇÈÇ∆é©ìÆÇ≈s.scansqued/s.rate Ç…ê›íËÇ≥ÇÍÇÈÅD
+
 
 %% AO
 %{
@@ -44,10 +45,12 @@ queueOutputData(s,recobj.OutData);
 s.NotifyWhenDataAvailableExceeds = recobj.recp;
 end
 %}
+s.NotifyWhenDataAvailableExceeds = recobj.recp;
 %% generate event listener for Background recording
 
 delete(lh)
 lh = addlistener(s, 'DataAvailable', @RecPlotData2);
 
+%}
 %% for sRot
 %sRot.DurationInSeconds = recobj.rect/sRot.Rate; % ç°ÇÃÇ∆Ç±ÇÎÇÕ sRot.Rate ÇÕ å≈íË

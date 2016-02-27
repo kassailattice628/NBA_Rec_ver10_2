@@ -58,9 +58,9 @@ elseif floop == 1;%Looping
             %%%%%%%%%%%%%%%%%
             % data は RecPlotData の中で recobj.dataall に入るようになってる
             % savedata を作る前に interval とる必要あり（？）
-            s.wait(recobj.rect/1000 +1);
-            %wait(s,recobj.rect/1000);
-            drawnow update
+            %s.wait((recobj.rect)/1000+1);
+            wait(s,recobj.rect/1000+1);
+            %drawnow update
             %%%%%%%%%%%%%%%%%
             %%%%%  set save data  %%%%%
             %%%%%%%%%%%%%%%%%

@@ -4,6 +4,7 @@
 % visual stimlus controller and recording elechtrical data
 
 clear;
+sca;
 close all;
 %% Reset DAQ
 daq.reset

@@ -8,11 +8,13 @@ function daqsetting
 % DAQ Range
 
 global sTrig
+global sTrig2
 global s
 global recobj
 global lh
 
-outputSingleScan(sTrig,[0,0,0,0]); %reset trigger signals at Low
+outputSingleScan(sTrig,[0,0,0]); %reset trigger signals at Low
+outputSingleScan(sTrig2,0); %reset trigger signals at Low
 
 %% for AI/AO
 s.Rate = recobj.sampf;

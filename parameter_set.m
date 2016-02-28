@@ -4,11 +4,12 @@ global recobj
 global dev
 global s
 global sTrig
+global sTrig2
 global InCh
 
 
 %% NBA version
-recobj.NBAver = 10.201;%10.2.1 for tokuoka experiment
+recobj.NBAver = 10.202;%10.2.2 for tokuoka experiment
 
 %% 電気記録と記録サイクル関係
 recobj.interval = 1; %loop interval(s);
@@ -168,11 +169,17 @@ stop(s)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% for digital Trigger
 sTrig = daq.createSession(dev.Vendor.ID);
-addDigitalChannel(sTrig, dev.ID, 'port0/line0:3', 'OutputOnly');
+addDigitalChannel(sTrig, dev.ID, 'port0/line0:2', 'OutputOnly');
 %0:Trig NIDAQ -> connect to start digidata
 %1:FV start Timing -> not used in Toku exp 
 %2:Stimulus is Stim On Timing -> connect to Ch0 of digidata
-%3:Opto timing -> connect to opt laser dirver (still not setting)
-outputSingleScan(sTrig,[0,0,0,0]); %reset trigger signals at Low
+
+outputSingleScan(sTrig,[0,0,0]); %reset trigger signals at Low
+
+% digital Trigger for Opto driver
+%line3: connect to Laser Driver
+sTrig2 = daq.createSession(dev.Vendor.ID);
+addDigitalChannel(sTrig2, dev.ID, 'port0/line3', 'OutputOnly');
+outputSingleScan(sTrig2,0); %reset trigger signals at Low
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

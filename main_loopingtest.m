@@ -4,6 +4,7 @@ global figUIobj
 global sobj
 global floop
 global sTrig
+global sTrig2
 global s
 
 floop = get(figUIobj.loop,'value');
@@ -12,8 +13,9 @@ fstim = get(figUIobj.stim,'value');
 if floop == 0;% Loop-Out
     set(figUIobj.loop,'string','Loop-Out','BackGroundColor','r');
     if sobj.ScrNum ~= 0
-        %Toku ‚Å‚Í dio ‚ð 4‚Â
-        outputSingleScan(sTrig,[0,0,0,0]); %trigger reset
+        %Toku ‚Å‚Í dio ‚ð 3‚Â
+        outputSingleScan(sTrig,[0,0,0]); %trigger reset
+        outputSingleScan(sTrig2,0); %trigger reset
     end
     sobj.Dir8 = randperm(8);
     sobj.Dir16 = randperm(16);
@@ -68,7 +70,8 @@ elseif floop == 1;%Looping
             %%%%%%%%%%%%%%%%%
             %%%%%   reset trigger   %%%%
             %%%%%%%%%%%%%%%%%
-            outputSingleScan(sTrig,[0,0,0,0]); %trigger reset
+            outputSingleScan(sTrig,[0,0,0]); %trigger reset
+            outputSingleScan(sTrig2,0); %trigger reset
             stop(s)
             pause(recobj.interval);
             floop = get(figUIobj.loop,'value');

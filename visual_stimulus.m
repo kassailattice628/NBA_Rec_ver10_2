@@ -3,6 +3,7 @@ function visual_stimulus
 global sobj
 global recobj
 global figUIobj
+global sTrig2
 
 fmode = get(figUIobj.mode,'value');
 
@@ -58,6 +59,7 @@ if recobj.cycleNum > 0 %stim_on
         %}
     end
 else %prestimulus
+    outputSingleScan(sTrig2,0); % TTL2 OFF
     Uni_stim_BG(i, sobj.bgcol); %blank ÇÕ Uni_stim Ç≈îwåiêFÇÇæÇ∑ÇÊÇ§Ç…ÇµÇÊÇ§
     sobj.vbl2_2 = sobj.vbl_1;
     sobj.vbl2_3 = sobj.vbl_1;

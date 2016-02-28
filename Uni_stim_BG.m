@@ -52,7 +52,7 @@ disp(['AITrig; ',sobj.pattern, ': #', num2str(recobj.cycleNum)]);
 %stim_OFF
 Screen('FillRect', sobj.wPtr, sobj.bgcol);
 [sobj.vbl_3, sobj.OnsetTime_3, sobj.FlipTimeStamp_3] = Screen(sobj.wPtr, 'Flip', sobj.vbl_2+sobj.duration); %%% sobj.duration ŽžŠÔŒo‰ßŒã monitor stim off
-outputSingleScan(sTrig,[0,0,0,0]);% DIO resrt
+outputSingleScan(sTrig,[0,0,0]);% DIO resrt
 sobj.sFlipTimeStamp_3=toc(recobj.STARTloop);
 stim_monitor_reset;
 

@@ -12,7 +12,7 @@ switch recobj.EOf
         
         if recobj.cycleNum == - recobj.prestim+1
             recobj.STARTloop= tic;
-            outputSingleScan(sTrig,[1,1,0,0]);%AI and FV start
+            outputSingleScan(sTrig,[1,1,0]);%AI and FV start
         else
             if sobj.ScrNum~=0
                 recobj.tRec = trigger_rec(1);
@@ -27,9 +27,9 @@ switch recobj.EOf
     case 1 %Elech only
         if recobj.cycleNum == - recobj.prestim+1
             recobj.STARTloop= tic;
-            outputSingleScan(sTrig,[1,1,0,0]);% FV10 and AI start
+            outputSingleScan(sTrig,[1,1,0]);% FV10 and AI start
         else
-            outputSingleScan(sTrig,[1,0,0,0]);% FV10 and AI start
+            outputSingleScan(sTrig,[1,0,0]);% FV10 and AI start
         end
         recobj.RecStartTimeToc = toc(recobj.STARTloop);%start timing counter
         recobj.RecStartTime = 0;

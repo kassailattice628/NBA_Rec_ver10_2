@@ -93,40 +93,93 @@ draw_tex(tex_id, sRect, ang, color_stim, phase, freq, sc, contrast);
 %%
 %photo sensor 用
 Screen('FillRect', sobj.wPtr, 255, [0 0 40 40]);
-%pause(0.001) %これがないと動かない？？？
 trigger_AIFV;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-if recobj.delayTTL2/1000 <= sobj.delayPTB %TTL2 の後 stim
-    while toc(recobj.STARTloop) - recobj.RecStartTimeToc <= recobj.delayTTL2/1000;%wait TTL2 delay (include delay TTL2 == 0)
+if recobj.delayTTL2/1000 <= sobj.delayPTB + sobj.duration %TTL ON is before Visual Stimlu OFF
+    
+    
+    if recobj.delayTTL2/1000 <= sobj.delayPTB %TTL2 の後 stim
+        while toc(recobj.STARTloop) - recobj.RecStartTimeToc <= recobj.delayTTL2/1000;%wait TTL2 delay (include delay TTL2 == 0)
+        end
+        if get(figUIobj.TTL2, 'value') ==0 % for Laser
+            recobj.tTTL2 = trigger_rec2(1) -  recobj.RecStartTimeToc;
+        else
+            recobj.tTTL2 = 0;
+        end
+        % onscreen に １枚目提示してタイマースタート
+        [sobj.vbl_2, sobj.OnsetTime_2, sobj.FlipTimeStamp_2] = Screen(sobj.wPtr, 'Flip', sobj.vbl_1+sobj.delayPTB);% put some delay for PTB
+        sobj.sFlipTimeStamp_2=toc(recobj.STARTloop);
+        outputSingleScan(sTrig,[0,0,1]);% DO for visual stimulus start
+        stim_monitor;
+    elseif recobj.delayTTL2/1000 > sobj.delayPTB %grating の途中で TTL2出せない気がする．．
+        disp('ERROR!!');
+        recobj.delayTTL2 = 0;
+        sobj.delayPTB = 0;
+        %{
+        %刺激中にTTL2出すならこんなかんじのをしたに書く？
+        if toc(recobj.STARTloop) - recobj.RecStartTimeToc <= recobj.delayTTL2/1000;%wait TTL2 delay (include delay TTL2 == 0)
+            if get(figUIobj.TTL2, 'value') == 0
+                recobj.tTTL2 = trigger_rec2(1) -  recobj.RecStartTimeToc;%TTL2 ON
+            else %FV trigger のときは TTL2 特に叩かなくてよい
+                recobj.tTTL2 = 0;
+            end
+        end
+        %}
     end
-    if get(figUIobj.TTL2, 'value') ==0 % for Laser
-        recobj.tTTL2 = trigger_rec(2) -  recobj.RecStartTimeToc;
-    else
-        recobj.tTTL2 = 0;
+    
+    % 刺激時間は，sobj.flipNumで定義しているので
+    for count = 1:sobj.flipNum
+        phase = count/sobj.shiftSpd*360;
+        draw_tex(tex_id,sRect,ang, color_stim, phase, freq, sc, contrast);
+        Screen('FillRect', sobj.wPtr, 255, [0 0 40 40]);
+        Screen('Flip', sobj.wPtr);
     end
+    
+    disp(['AITrig; ', sobj.pattern, ': #', num2str(recobj.cycleNum)]);
+    %stim_OFF
+    Screen('FillRect', sobj.wPtr, sobj.bgcol);
+    [sobj.vbl_3, sobj.OnsetTime_3, sobj.FlipTimeStamp_3] = Screen(sobj.wPtr, 'Flip', sobj.vbl_2+sobj.duration);
+    outputSingleScan(sTrig,[0,0,0]);% DO resrt (stim off)
+    outputSingleScan(sTrig2,0); % TTL2 OFF
+    sobj.sFlipTimeStamp_3=toc(recobj.STARTloop);
+    stim_monitor_reset;
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    
+    
+elseif recobj.delayTTL2/1000 > sobj.delayPTB + sobj.duration %TTL ON is after Visual Stimlu OFF
+    %Stim_ON
     % onscreen に １枚目提示してタイマースタート
     [sobj.vbl_2, sobj.OnsetTime_2, sobj.FlipTimeStamp_2] = Screen(sobj.wPtr, 'Flip', sobj.vbl_1+sobj.delayPTB);% put some delay for PTB
     sobj.sFlipTimeStamp_2=toc(recobj.STARTloop);
-    outputSingleScan(sTrig,[0,0,1,0]);% DO for visual stimulus start
+    outputSingleScan(sTrig,[0,0,1]);% DO for visual stimulus start
     stim_monitor;
-elseif recobj.delayTTL2/1000 > sobj.delayPTB %grating の途中で TTL2出せない気がする．．
-    disp('ERROR!!');
-    recobj.delayTTL2 = 0;
-    sobj.delayPTB = 0;
+    % 刺激時間は，sobj.flipNumで定義しているので
+    for count = 1:sobj.flipNum
+        phase = count/sobj.shiftSpd*360;
+        draw_tex(tex_id,sRect,ang, color_stim, phase, freq, sc, contrast);
+        Screen('FillRect', sobj.wPtr, 255, [0 0 40 40]);
+        Screen('Flip', sobj.wPtr);
+    end
+    
+    disp(['AITrig; ', sobj.pattern, ': #', num2str(recobj.cycleNum)]);
+    
+    %stim_OFF
+    Screen('FillRect', sobj.wPtr, sobj.bgcol);
+    [sobj.vbl_3, sobj.OnsetTime_3, sobj.FlipTimeStamp_3] = Screen(sobj.wPtr, 'Flip', sobj.vbl_2+sobj.duration);
+    outputSingleScan(sTrig,[0,0,0]);% DO resrt (stim off)
+    outputSingleScan(sTrig2,0); % TTL2 OFF
+    sobj.sFlipTimeStamp_3=toc(recobj.STARTloop);
+    stim_monitor_reset;
+    
+    %TTL2_ON
+    while toc(recobj.STARTloop) - recobj.RecStartTimeToc <= recobj.delayTTL2/1000;%wait TTL2 delay (include delay TTL2 == 0)
+    end
+    if get(figUIobj.TTL2, 'value') == 0
+        recobj.tTTL2 = trigger_rec2(1) -  recobj.RecStartTimeToc;%TTL2 ON
+    else %FV trigger のときは TTL2 特に叩かなくてよい
+        recobj.tTTL2 = 0;
+    end
+    
+    %when complex TTL pattern will be used, the code will be here.
+    %No TTL2 OFF is  rec OFF timing
 end
-
-% 刺激時間は，sobj.flipNumで定義しているので
-for count = 1:sobj.flipNum
-    phase = count/sobj.shiftSpd*360;
-    draw_tex(tex_id,sRect,ang, color_stim, phase, freq, sc, contrast);
-    Screen('FillRect', sobj.wPtr, 255, [0 0 40 40]);
-    Screen('Flip', sobj.wPtr);
-end
-
-disp(['AITrig; ', sobj.pattern, ': #', num2str(recobj.cycleNum)]);
-%stim_OFF
-Screen('FillRect', sobj.wPtr, sobj.bgcol);
-[sobj.vbl_3, sobj.OnsetTime_3, sobj.FlipTimeStamp_3] = Screen(sobj.wPtr, 'Flip', sobj.vbl_2+sobj.duration);
-outputSingleScan(sTrig,[0,0,0,0]);% DO resrt (stim off)
-sobj.sFlipTimeStamp_3=toc(recobj.STARTloop);
-stim_monitor_reset;

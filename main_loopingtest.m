@@ -13,7 +13,9 @@ fstim = get(figUIobj.stim,'value');
 if floop == 0;% Loop-Out
     set(figUIobj.loop,'string','Loop-Out','BackGroundColor','r');
     if sobj.ScrNum ~= 0
-        %Toku では dio を 3つ
+        %sTrig=P0.0:2; P0.0:DAQ start Trig; P0.1:Fluoview Trig;
+        %P0.2:VisualStimulus Timing
+        %sTrig2=P0.3; TTL2 for other device
         outputSingleScan(sTrig,[0,0,0]); %trigger reset
         outputSingleScan(sTrig2,0); %trigger reset
     end
@@ -34,6 +36,8 @@ elseif floop == 1;%Looping
             %%%%%%%%%%%%%%%%%%%%%%%
             if fstim == 1%visual stim ON
                 visual_stimulus;
+                
+                %%% Timinig Mesure %%%
                 recobj.tRec = sobj.vbl_1- recobj.RecStartTime; %Absolute time
                 sobj.tPTBon = sobj.vbl_2 - sobj.vbl_1;
                 sobj.tPTBoff = sobj.vbl_3 -  sobj.vbl_1;
@@ -62,7 +66,7 @@ elseif floop == 1;%Looping
             % savedata を作る前に interval とる必要あり（？）
             %s.wait((recobj.rect)/1000+1);
             wait(s,recobj.rect/1000+1);
-            %drawnow update
+            drawnow update
             %%%%%%%%%%%%%%%%%
             %%%%%  set save data  %%%%%
             %%%%%%%%%%%%%%%%%
@@ -82,7 +86,6 @@ elseif floop == 1;%Looping
         end
         disp(['#: ',num2str(recobj.cycleNum)])
     end %%% Loop END %%%
-    
     
     %%% Reset Cycle Num %%%
     recobj.cycleNum = 0- recobj.prestim;

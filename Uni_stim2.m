@@ -26,7 +26,6 @@ end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 if recobj.delayTTL2/1000 <= sobj.delayPTB + sobj.duration %TTL ON is before Visual Stimlu OFF
-    
     if recobj.delayTTL2/1000 <= sobj.delayPTB %TTL2 appears earlier than Visual Stimulus
         while toc(recobj.STARTloop) - recobj.RecStartTimeToc <= recobj.delayTTL2/1000;%wait TTL2 delay (include delay TTL2 == 0)
         end
@@ -39,7 +38,6 @@ if recobj.delayTTL2/1000 <= sobj.delayPTB + sobj.duration %TTL ON is before Visu
         sobj.sFlipTimeStamp_2=toc(recobj.STARTloop);
         outputSingleScan(sTrig,[0,0,1]);% DO for visual stimulus start
         stim_monitor;
-        
     elseif recobj.delayTTL2/1000> sobj.delayPTB %VisualStimulus appears earlier than TTL2
         [sobj.vbl_2, sobj.OnsetTime_2, sobj.FlipTimeStamp_2] = Screen(sobj.wPtr, 'Flip', sobj.vbl_1+sobj.delayPTB);% put some delay for PTB
         outputSingleScan(sTrig,[0,0,1]);% DO for visual stimulus start

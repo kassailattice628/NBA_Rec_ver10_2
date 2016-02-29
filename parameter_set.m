@@ -126,7 +126,6 @@ sobj.position_cord2 = zeros(1,4);
 sobj.stim2_center = zeros(1,2);
 sobj.dist_pix = 0;
 
-
 %Zoom and Fine mapping
 sobj.zoom_dist = 0;
 sobj.zoom_ang = 0;
@@ -162,7 +161,7 @@ addTriggerConnection(s,'External',[dev.ID,'/PFI0'],'StartTrigger');
 s.Connections(1).TriggerCondition = 'RisingEdge';
 % generate event listener for Background recording
 lh = addlistener(s, 'DataAvailable', @RecPlotData2);
-%}
+
 stop(s)
 
 

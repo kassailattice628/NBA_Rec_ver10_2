@@ -54,6 +54,9 @@ if recobj.cycleNum > 0 %stim_on
         case {'Images'}
             Test_RandImgs(i);
             disp('RandImages');
+        case {'rdots'}
+            rand_dtos(i);
+            disp('RandDots');
     end
 else %prestimulus
     Uni_stim2(i, sobj.bgcol); %blank ‚Í Uni_stim ‚Å”wŒiF‚ğ‚¾‚·‚æ‚¤‚É‚µ‚æ‚¤

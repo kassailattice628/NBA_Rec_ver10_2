@@ -7,14 +7,11 @@ function daqsetting
 % pulse stepAmp
 % DAQ Range
 
-global sTrig
 global s
 global sRot
 global recobj
 global figUIobj
 global lh
-
-outputSingleScan(sTrig,[0,0]); %reset trigger signals at Low
 
 %% for AI/AO
 s.Rate = recobj.sampf;
@@ -42,9 +39,11 @@ queueOutputData(s,recobj.OutData);
 s.NotifyWhenDataAvailableExceeds = recobj.recp;
 end
 %% generate event listener for Background recording
-
 delete(lh)
 lh = addlistener(s, 'DataAvailable', @RecPlotData2);
 
-%% for sRot
-%sRot.DurationInSeconds = recobj.rect/sRot.Rate; % ç°ÇÃÇ∆Ç±ÇÎÇÕ sRot.Rate ÇÕ å≈íË
+%% reset all defined do lines
+ResetAllTrig
+
+%% for Rotary encoder
+sRot.DurationInSeconds = recobj.rect/sRot.Rate; % ç°ÇÃÇ∆Ç±ÇÎÇÕ sRot.Rate ÇÕ å≈íË

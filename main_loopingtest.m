@@ -3,16 +3,15 @@ global recobj
 global figUIobj
 global sobj
 global floop
-global sTrig
 global s
-
+global dio
 floop = get(figUIobj.loop,'value');
 fstim = get(figUIobj.stim,'value');
 
 if floop == 0;% Loop-Out
     set(figUIobj.loop,'string','Loop-Out','BackGroundColor','r');
     if sobj.ScrNum ~= 0
-        outputSingleScan(sTrig,[0,0]); %trigger reset
+        ResetAllTrig;
     end
     sobj.Dir8 = randperm(8);
     sobj.Dir16 = randperm(16);
@@ -23,7 +22,6 @@ elseif floop == 1;%Looping
     daqsetting;
     
     %%%%%  main looping  %%%%%
-    
     while floop == 1
         try %error check
             recobj.cycleNum = recobj.cycleNum +1;
@@ -72,7 +70,8 @@ elseif floop == 1;%Looping
             %%%%%%%%%%%%%%%%%
             %%%%%   reset trigger   %%%%
             %%%%%%%%%%%%%%%%%
-            outputSingleScan(sTrig,[0,0]); %trigger reset
+            outputSingleScan(dio.TrigAI,0);
+            outputSingleScan(dio.TrigFV,0);
             stop(s)
             pause(recobj.interval);
             floop = get(figUIobj.loop,'value');
@@ -91,4 +90,8 @@ elseif floop == 1;%Looping
     sobj.stimsz = stim_size(sobj.MonitorDist,figUIobj.size); %Random size ‚ÌŒã size ‚ð–ß‚·
     sobj.stimsz2 = stim_size(sobj.MonitorDist,figUIobj.size2);
     clear recobj.STARTloop;
+end
+
+%% nested function %%
+
 end

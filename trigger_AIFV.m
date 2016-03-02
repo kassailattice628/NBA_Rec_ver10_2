@@ -1,7 +1,8 @@
 function trigger_AIFV
-global sTrig
+global dio
 global recobj
 global sobj
+global figUIobj
 
 switch recobj.EOf
     case 0
@@ -12,15 +13,16 @@ switch recobj.EOf
         
         if recobj.cycleNum == - recobj.prestim+1
             recobj.STARTloop= tic;
-            outputSingleScan(sTrig,[1,1]);% FV10 and AI start
+            startTrig
         else
             if sobj.ScrNum~=0
-                recobj.tRec = trigger_rec(1);
-                %outputSingleScan(sTrig,[1,0]);% FV10 and AI start
+                outputSingleScan(dio.TrigAI,1)% start AI
+                recobj.tRec = toc(recobj.STARTloop);
             end
         end
         
         recobj.RecStartTimeToc = toc(recobj.STARTloop);%start timing counter
+        
         if recobj.cycleNum == - recobj.prestim+1
             recobj.RecStartTime = sobj.vbl_1;
             recobj.sRecStartTime = recobj.RecStartTimeToc;
@@ -29,11 +31,21 @@ switch recobj.EOf
     case 1
         if recobj.cycleNum == - recobj.prestim+1
             recobj.STARTloop= tic;
-            outputSingleScan(sTrig,[1,1]);% FV10 and AI start
+            startTrig;
         else
-            outputSingleScan(sTrig,[1,0]);% FV10 and AI start
+            outputSingleScan(dio.TrigAI,1)% start AI
         end
         recobj.RecStartTimeToc = toc(recobj.STARTloop);%start timing counter
         recobj.RecStartTime = 0;
         recobj.sRecStartTime = recobj.RecStartTimeToc;
+        
+end
+%% nested function
+    function startTrig
+        outputSingleScan(dio.TrigAI,1)% start AI
+        outputSingleScan(dio.TrigFV,1)% start FV
+        if get(figUIobj.RotCtr,'value') == 1
+                figUIobj.yRot = RotOn;
+        end
+    end
 end

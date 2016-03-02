@@ -5,6 +5,7 @@
 
 clear;
 close all;
+sca;
 %% Reset DAQ
 daq.reset
 %%
@@ -31,7 +32,7 @@ end
 sobj.duration = sobj.flipNum*sobj.m_int;% sec
 
 %Screen('CloseAll');
-figUIobj.f1 = figure('Position',[10, 20, 1000, 750], 'Name','None But Air' );
+figUIobj.f1 = figure('Position',[10, 20, 1000, 750], 'Name','None But Air','Menubar','none');
 gui_window3; %loop ÇÕ Ç±ÇÃíÜÇ≈éQè∆ÇµÇƒÇÈ main_looping
 
 check_duration2;

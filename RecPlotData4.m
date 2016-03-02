@@ -1,4 +1,4 @@
-function RecPlotData3(src,event)
+function RecPlotData4(src,event)
 
 global figUIobj
 global recobj
@@ -33,4 +33,17 @@ refreshdata(figUIobj.flash2)
 refreshdata(figUIobj.flash3)
 
 %% plot Rotary
-if 
+switch get(figUIobj.RotCtr,'value')
+    case 1
+    positionData = startForeground(sRot);
+    % decode plot
+    signedThreshold = 2^(32-1);
+    signedData = positionData(:,1);
+    signedData(signedData > signedThreshold) = signedData(signedData > signedThreshold) - 2^32;
+    
+    recobj.positionDataDeg = signedData * 360/1000/4;
+    %plot ÇÇ«Ç§Ç∑ÇÈÇ©ÅH
+    figure; plot(timestamps, recobj.positionDataDeg);
+    xlabel('Time(s)');
+    ylabel('Anagular position (deg)');
+end

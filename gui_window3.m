@@ -243,7 +243,6 @@ figUIobj.save=uicontrol('style','togglebutton','position', [655 550 70 30],'stri
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%              Rotary Encoder            %%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%uipanel('Title','Vis. Stim.1','FontSize',12,'Position',[0.005 0.013 0.195 0.87]);
 uipanel('Title','Rotary.Encoder','FontSize',12,'Position',[0.205 0.013 0.195 0.295]);
 
 %Rotary Encoder ON/OFF

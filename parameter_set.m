@@ -3,13 +3,13 @@ global sobj
 global recobj
 global dev
 global s
-global sTrig
 global InCh
 global OutCh
 global lh
+global dio % digital
 
 %% NBA version
-recobj.NBAver = 10.2;
+recobj.NBAver = 10.3;%Version 10.3 developing
 
 %% 電気記録と記録サイクル関係
 recobj.interval = 1; %loop interval(s);
@@ -19,15 +19,11 @@ recobj.rect = 2*1000; %recording time (1s<-1000ms)
 recobj.recp = recobj.sampf*recobj.rect/1000;
 recobj.rectaxis = (0:recobj.sampt/1000:(recobj.recp-1)/recobj.sampf*1000)';%time axis (ms)
 
-
 recobj.plot = 1; %V/I plot, 1: V plot, 2: I plot
 recobj.yaxis = 0;%0: fix y axis, 1: auto
 recobj.yrange = [-100, 30, -5, 3];%[Vmin, Vmax, Cmin, Cmax]
-
 recobj.prestim = 2; % recobj.prestim * recobj.rect (ms) は 刺激なしの blank loop
-
 recobj.fopenflag = 0;
-
 %
 recobj.dataall = zeros(recobj.recp,3);%AI channel ３つ分
 
@@ -39,7 +35,6 @@ recobj.pulseDelay = 0.2; %sec
 recobj.pulseDuration = 0.2; %sec
 
 %step
-%recobj.stepVC = [0,100,10;0,0.5,0.1];%[Vstart,Vend,Vstep;Cstart,Cend,Cstep]; (mV) and (nA)
 recobj.stepCV = [0,0.5,0.1;0,100,10];%[Cstart,Cend,Cstep;Vstart,Vend,Vstep]; (nA) and (mV)
 recobj.stepAmp = 0:0.1:0.5;%Cstep
 
@@ -105,16 +100,11 @@ sobj.tPTBoff2=0;
 
 sobj.fixpos = 1;
 
-%sobj.shiftSpd = 20; %
 sobj.shiftSpd2 = 2;%Hz
-%sobj.shiftSpd_list = [20; 30; 50;100];% Frames/cycle
 sobj.shiftSpd_list = [0.5; 1; 2; 4; 8];%Hz
 
-%sobj.gratFreq = 1/1000*2*pi;%cycle/pixel
 sobj.gratFreq2 = 0.08;% cycle/degree
-%sobj.gratFreq_list = [1/1000*2*pi;3/1000*2*pi;5/1000*2*pi;10/1000*2*pi;30/1000*2*pi;50/1000*2*pi];
 sobj.gratFreq_list = [0.01;0.02;0.04;0.08;0.16;0.32];
-
 
 sobj.shiftDir = 1;%1~8:方向, 9: 8 方向random, 10: 4方向random
 sobj.angle = 0;%savedata用
@@ -123,13 +113,11 @@ sobj.angle16_deg = linspace(0,337.5,16);
 
 sobj.dist = 15; %distance(degree) for 2nd stimulus for lateral inhibition
 
-
 sobj.position = 0;
 sobj.position_cord = zeros(1,4);
 sobj.position_cord2 = zeros(1,4);
 sobj.stim2_center = zeros(1,2);
 sobj.dist_pix = 0;
-
 
 %Zoom and Fine mapping
 sobj.zoom_dist = 0;
@@ -142,6 +130,7 @@ sobj.ImageNum = 256;
 sobj.list_img = 1:sobj.ImageNum;
 
 %% Session Based DAQ 
+
 dev = daq.getDevices;
 s = daq.createSession(dev.Vendor.ID);
 
@@ -149,16 +138,17 @@ s.Rate = recobj.sampf;
 s.DurationInSeconds = recobj.rect/1000;%sec %outputchannel いれると自動でs.scansqued/s.rate に設定される．
 s.NotifyWhenDataAvailableExceeds = recobj.recp;
 
-InCh = addAnalogInputChannel(s, dev.ID, 0:2, 'Voltage');%(1):Vm, (2):Im, (3):photo sensor
+InCh = addAnalogInputChannel(s, dev.ID, 0:4, 'Voltage');%(1):Vm, (2):Im, (3):photo sensor
 InCh(1).TerminalConfig = 'Differential';%SingleEnded から Differential に変更した．
 InCh(2).TerminalConfig = 'Differential';
 InCh(3).TerminalConfig = 'Differential';
-
+InCh(4).TerminalConfig = 'Differential';%This channle is used for hardware timing
 
 OutCh = addAnalogOutputChannel(s, dev.ID, 0:1,'Voltage');
 %(1):Curretn Pulse (C clamp)
 %(2):Voltage Pulse (V clamp)
 
+% PFI0 can be used as AI start in NI-DAQ.
 % P0.0 is Trigger source, PFI0 is Trigger Destination.
 addTriggerConnection(s,'External',[dev.ID,'/PFI0'],'StartTrigger');
 s.Connections(1).TriggerCondition = 'RisingEdge';
@@ -166,27 +156,41 @@ s.Connections(1).TriggerCondition = 'RisingEdge';
 lh = addlistener(s, 'DataAvailable', @RecPlotData2);
 stop(s)
 
-%% for digital Trigger
-sTrig = daq.createSession(dev.Vendor.ID);
-addDigitalChannel(sTrig, dev.ID, 'port0/line0:1', 'OutputOnly');
-outputSingleScan(sTrig,[0,0]); %reset trigger signals at Low
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% for digital Trigger
+
+%P0.0:Trig NIDAQ -> connect to PFI0
+dio.TrigAI = daq.createSession(dev.Vendor.ID);
+addDigitalChannel(dio.TrigAI, dev.ID, 'port0/line0', 'OutputOnly');
+outputSingleScan(dio.TrigAI,0);%reset trigger signals at Low
+
+%P0.1:FV start Timing -> connect to Olympus FV PC
+dio.TrigFV = daq.createSession(dev.Vendor.ID);
+addDigitalChannel(dio.TrigFV, dev.ID, 'port0/line1', 'OutputOnly');
+outputSingleScan(dio.TrigFV,0);%reset trigger signals at Low
+
+%P0.2:Visual Stimulus On Timing 
+dio.VSon = daq.createSession(dev.Vendor.ID);
+addDigitalChannel(dio.VSon, dev.ID, 'port0/line2', 'OutputOnly');
+outputSingleScan(dio.VSon,0); %reset trigger signals at Low
+
+%P0.3:digital Trigger for other device
+dio.Trig2 = daq.createSession(dev.Vendor.ID);
+addDigitalChannel(dio.Trig2, dev.ID, 'port0/line3', 'OutputOnly');
+outputSingleScan(dio.Trig2,0); %reset trigger signals at Low
+
+%if other digital outputs will be needed, the code is here.
+
 %% for Rotary Encoder
 %{
 global sRot
-sRot5V = daq.createSession(dev.Vendor.ID);
-addDigitalChannel(sRot5V, 'Dev2', 'port0/line3', 'OutputOnly'); %5V 電源の確保
-outputSingleScan(sRot5V, 1); %reset trigger signals at Low
-
 sRot = daq.createSession(dev.Vendor.ID);
 %Counter channel の 生成
-RotCh = addCounterInputChannel(sRot, 'Dev2', 'ctr0', 'Position');
+RotCh = addCounterInputChannel(sRot, dev.ID, 'ctr0', 'Position');
 RotCh.EncoderType='X4'; %デコーディング方式 X1, X2, X4 が選べるが X4 が一番感度が高くなるので
-addAnalogInputChannel(sRot, 'Dev2', 3, 'Voltage');% AI0:2 は Vm, Im, Photo, AI3 をエンコーダに
-sRot.Rate = 1000;% s とは別に sampling rate を設定
+sRot.Rate = recobj.sampf;% s とは別に sampling rate を設定できるのか？
 sRot.DurationInSeconds = recobj.rect/1000; %ms
-% P0.0 is Trigger source, PFI0 is Trigger Destination.これで同時に記録できる？
-addTriggerConnection(sRot,'External',[dev.ID,'/PFI0'],'StartTrigger');
-sRot.Connections(1).TriggerCondition = 'RisingEdge';
 %}
+%Counter channel の 生成
+RotCh = addCounterInputChannel(s, dev.ID, 'ctr0', 'Position');
+RotCh.EncoderType='X4'; %デコーディング方式 X1, X2, X4 が選べるが X4 が一番感度が高くなるので

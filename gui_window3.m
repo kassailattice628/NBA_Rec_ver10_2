@@ -151,7 +151,7 @@ uicontrol('style','text','position',[265 400 25 15],'string','deg','Horizontalal
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%              Electrophysiology             %%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-uipanel('Title','NI DAQ Setting','FontSize',12,'Position',[0.42 0.73 0.55 0.26]);
+uipanel('Title','Rec Setting','FontSize',12,'Position',[0.42 0.73 0.55 0.26]);
 %%%
 uicontrol('style','text','position',[435 695 60 15],'string','Samp.Freq','Horizontalalignment','left');
 figUIobj.sampf=uicontrol('style','edit','position',[435 670 50 25],'string',recobj.sampf/1000,'callback','recobj.sampf = str2double(get(figUIobj.sampf,''string''))*1000; daqsetting;ch_plot','BackGroundColor','w');
@@ -243,6 +243,7 @@ figUIobj.save=uicontrol('style','togglebutton','position', [655 550 70 30],'stri
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%              Rotary Encoder            %%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%uipanel('Title','Vis. Stim.1','FontSize',12,'Position',[0.005 0.013 0.195 0.87]);
 uipanel('Title','Rotary.Encoder','FontSize',12,'Position',[0.205 0.013 0.195 0.295]);
 
 %Rotary Encoder ON/OFF

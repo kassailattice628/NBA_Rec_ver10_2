@@ -16,7 +16,7 @@ global floop
 
 %% parameter setting
 floop=1;
-parameter_set;
+parameter_setMac;
 
 %% cycle number counter set 0
 recobj.cycleNum = 0 - recobj.prestim; %loop cycle number
@@ -32,7 +32,6 @@ end
 sobj.duration = sobj.flipNum*sobj.m_int;% sec
 
 %Screen('CloseAll');
-figUIobj.f1 = figure('Position',[10, 20, 1000, 750], 'Name','None But Air','Menubar','none');
-gui_window3; %loop ‚Í ‚±‚Ì’†‚ÅQÆ‚µ‚Ä‚é main_looping
+figUIobj = gui_window3; %loop ‚Í ‚±‚Ì’†‚ÅQÆ‚µ‚Ä‚é main_looping
 
 check_duration2;
